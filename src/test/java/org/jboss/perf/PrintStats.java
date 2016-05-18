@@ -57,7 +57,16 @@ public class PrintStats {
          }
 
       }
-      int maxLenght = statsMap.keySet().stream().map(s -> s.length()).max(Integer::compare).get();
+
+      //remove stream and lambda to run on java 7 - need this to run on jboss web, jboss AS7 will not boot on java 8
+//      int maxLenght = statsMap.keySet().stream().map( s -> s.length()).max(Integer::compare).get();
+      int maxLenght = 0;
+
+      for(String key: statsMap.keySet()){
+         if(key.length() > maxLenght){
+            maxLenght = key.length();
+         }
+      }
       String indent = indent(maxLenght - 4);
       System.out.println();
       System.out.printf("Test%s Requests Errors   Mean     Std.dev. Min      Max      50th pct 75th pct 95th pct 99th pct%n", indent);

@@ -16,18 +16,21 @@ abstract class BaseSimulation extends Simulation {
   val duration = Integer.getInteger("test.duration", 2)
   val host = System.getProperty("test.host", "localhost");
   val port = Integer.getInteger("test.port", 8080);
-
-  def root() = Activator.ROOT_PATH;
+  val pauseTime = Integer.getInteger("test.pauseTime", 4);
 
   def protocolConf() = {
-      http.baseURL("http://" + host + ":" + port + root()).doNotTrackHeader("1").shareConnections
+    http.baseURL("http://" + host + ":" + port + Activator.ROOT_PATH).doNotTrackHeader("1").shareConnections
   }
 
   def pre(scenarioBuilder: ScenarioBuilder) = scenarioBuilder
+
   def run(http: Http): HttpRequestBuilder;
-  def run(scenarioBuilder: ScenarioBuilder): ScenarioBuilder = pre(scenarioBuilder).exec(run(http(name)))
 
   var name = getClass().getName();
   name = name.substring(name.lastIndexOf('.') + 1).replaceAllLiterally("$", ".");
-  setUp(run(scenario(name)).inject(rampUsers(rps.toInt) over (rampUp seconds), constantUsersPerSec(rps) during (duration seconds)).protocols(protocolConf()))
+  setUp(pre(scenario(name).pause(pauseTime)).exec(run(http(name)))
+    .inject(
+      rampUsers(rps.toInt) over (rampUp seconds),
+      constantUsersPerSec(rps) during (duration seconds)
+    ).protocols(protocolConf()))
 }
