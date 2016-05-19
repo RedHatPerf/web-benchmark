@@ -12,7 +12,7 @@ import javax.ws.rs.ext.Provider;
  */
 @ApplicationPath("/test")
 public class Activator extends Application {
-   public static final String ROOT_PATH = "/webapp-rs/test";
+   public static final String ROOT_PATH = "/web-benchmark/test";
 
    @Provider
    public static class QuietNotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {

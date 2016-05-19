@@ -11,12 +11,13 @@ SIMULATION_CLASS="org.jboss.perf.HashingServletSimulations\$Get"
 
 REQUESTS_PER_SECOND=$MIN_RPS
 NO_REPORTS=TRUE
+HOST=_HOSTNAME_
 
 echo "Starting runs"
 while [ $REQUESTS_PER_SECOND -lt $MAX_RPS ]
 do
     echo "Running @: $REQUESTS_PER_SECOND"
-    mvn -P client gatling:execute -Dtest.rps=$REQUESTS_PER_SECOND -Dtest.rampUp=$RAMP_UP -Dtest.duration=$DURATION -Dtest.pauseTime=$THINK_TIME -Dgatling.simulationClass=$SIMULATION_CLASS -Dgatling.noReports=$NO_REPORTS -Dgatling.outputName=$REQUESTS_PER_SECOND
+    mvn -P client gatling:execute -Dtest.host=$HOST -Dtest.rps=$REQUESTS_PER_SECOND -Dtest.rampUp=$RAMP_UP -Dtest.duration=$DURATION -Dtest.pauseTime=$THINK_TIME -Dgatling.simulationClass=$SIMULATION_CLASS -Dgatling.noReports=$NO_REPORTS -Dgatling.outputName=$REQUESTS_PER_SECOND
     REQUESTS_PER_SECOND=$[$REQUESTS_PER_SECOND+$RPS_INCREMENT]
 done
 echo "done"
