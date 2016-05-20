@@ -27,7 +27,7 @@ public class HashingServlet extends HttpServlet {
 
             Random randomGenerator = new Random();
 
-            int max = randomGenerator.nextInt(100);
+            int max = randomGenerator.nextInt(1000);
 
             mdg.update(hash.getBytes());
 
