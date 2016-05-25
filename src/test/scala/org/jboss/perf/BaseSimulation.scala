@@ -28,7 +28,8 @@ abstract class BaseSimulation extends Simulation {
 
   var name = getClass().getName();
   name = name.substring(name.lastIndexOf('.') + 1).replaceAllLiterally("$", ".");
-  setUp(pre(scenario(name).pause(pauseTime)).exec(run(http(name)))
+//  setUp(pre(scenario(name).pause(pauseTime)).exec(run(http(name)))
+  setUp(pre(scenario(name)).exec(run(http(name)))
     .inject(
       rampUsers(rps.toInt) over (rampUp seconds),
       constantUsersPerSec(rps) during (duration seconds)
