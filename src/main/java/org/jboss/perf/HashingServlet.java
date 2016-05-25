@@ -1,12 +1,13 @@
 package org.jboss.perf;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 /**
  * Created by johara on 22/04/16.
@@ -25,9 +26,10 @@ public class HashingServlet extends HttpServlet {
         try {
             MessageDigest mdg = MessageDigest.getInstance("MD5");
 
-            Random randomGenerator = new Random();
+//            Random randomGenerator = new Random();
 
-            int max = randomGenerator.nextInt(1000);
+//            int max = randomGenerator.nextInt(1000);
+            int max = 10; //randomGenerator.nextInt(10);
 
             mdg.update(hash.getBytes());
 
