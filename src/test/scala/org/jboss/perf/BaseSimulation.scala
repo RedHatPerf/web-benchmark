@@ -31,7 +31,7 @@ abstract class BaseSimulation extends Simulation {
 //  setUp(pre(scenario(name).pause(pauseTime)).exec(run(http(name)))
   setUp(pre(scenario(name)).exec(run(http(name)))
     .inject(
-      rampUsers(rps.toInt) over (rampUp seconds),
+      rampUsersPerSec(1) to (rps) during(rampUp seconds),
       constantUsersPerSec(rps) during (duration seconds)
     ).protocols(protocolConf()))
 }
