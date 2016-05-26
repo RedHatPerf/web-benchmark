@@ -28,7 +28,7 @@
         <!-- maven-compiler-plugin -->
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
-        <gatling.version>2.1.7</gatling.version>
+        <gatling.version>2.2.0</gatling.version>
         <http-servlet.version>2.5</http-servlet.version>
         <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
         <gatling.runMultipleSimulations>true</gatling.runMultipleSimulations>
