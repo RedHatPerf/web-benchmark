@@ -4,7 +4,9 @@ import io.gatling.core.Predef._
 import io.gatling.core.body.StringBody
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.Http
-import org.jboss.perf.model.JaxbPerson;
+import org.jboss.perf.model.JaxbPerson
+
+import java.nio.charset.StandardCharsets;
 
 /**
   * @author Radim Vansa &ltrvansa@redhat.com&gt;
@@ -18,13 +20,13 @@ object JaxbXmlSimulations {
 
   class Post extends BaseSimulation with AppXml {
     def run(http: Http) = {
-      http.post("/jaxb").body(new StringBody(JaxbPerson.JOHNNY_XML)).check(status.is(204));
+      http.post("/jaxb").body(new StringBody(JaxbPerson.JOHNNY_XML, StandardCharsets.UTF_8)).check(status.is(204));
     }
   }
 
   class Put extends BaseSimulation with AppXml {
     def run(http: Http) = {
-      http.put("/jaxb").body(new StringBody(JaxbPerson.JOHNNY_XML)).check(status.is(200), bodyString.is(JaxbPerson.JOHNNY_XML));
+      http.put("/jaxb").body(new StringBody(JaxbPerson.JOHNNY_XML, StandardCharsets.UTF_8)).check(status.is(200), bodyString.is(JaxbPerson.JOHNNY_XML));
     }
   }
 }

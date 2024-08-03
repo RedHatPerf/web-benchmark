@@ -1,11 +1,11 @@
 package org.jboss.perf;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
 /**
  * @author Radim Vansa &ltrvansa@redhat.com&gt;

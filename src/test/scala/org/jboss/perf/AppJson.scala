@@ -1,6 +1,6 @@
 package org.jboss.perf
 
-import javax.ws.rs.core.MediaType
+import jakarta.ws.rs.core.MediaType
 import io.gatling.core.Predef._
 
 /**

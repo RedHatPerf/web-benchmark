@@ -6,6 +6,8 @@ import io.gatling.http.Predef._
 import io.gatling.http.request.builder.Http
 import org.jboss.perf.model.PojoPerson
 
+import java.nio.charset.StandardCharsets
+
 /**
   * @author Radim Vansa &ltrvansa@redhat.com&gt;
   */
@@ -25,13 +27,13 @@ object PojoJsonSimulations {
 
   class Post extends BaseSimulation with AppJson {
     def run(http: Http) = {
-      http.post("/pojo").body(new StringBody(PojoPerson.JOHNNY_JSON)).check(status.is(204));
+      http.post("/pojo").body(new StringBody(PojoPerson.JOHNNY_JSON, StandardCharsets.UTF_8)).check(status.is(204));
     }
   }
 
   class Put extends BaseSimulation with AppJson {
     def run(http: Http) = {
-      http.put("/pojo").body(new StringBody(PojoPerson.JOHNNY_JSON)).check(status.is(200), bodyString.is(PojoPerson.JOHNNY_JSON));
+      http.put("/pojo").body(new StringBody(PojoPerson.JOHNNY_JSON, StandardCharsets.UTF_8)).check(status.is(200), bodyString.is(PojoPerson.JOHNNY_JSON));
     }
   }
 }

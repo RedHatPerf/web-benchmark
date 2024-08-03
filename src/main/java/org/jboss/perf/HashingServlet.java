@@ -1,21 +1,27 @@
 package org.jboss.perf;
 
-import org.apache.commons.codec.binary.Hex;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 /**
  * Created by johara on 22/04/16.
  */
+@WebServlet("/test/HashingTest/")
 public class HashingServlet extends HttpServlet {
-    private ThreadLocal<MessageDigest> mdg = new ThreadLocal<>();
+
+    private static final char[] table = {
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+    private final ThreadLocal<MessageDigest> mdg = new ThreadLocal<>();
 
     public HashingServlet() {
         initialiseMessageDigest();
@@ -48,7 +54,7 @@ public class HashingServlet extends HttpServlet {
         updateMdg(hash);
 
         for (int i = 0; i < max; i++) {
-            responseBuild.append(Hex.encodeHexString(getDigest()));
+            responseBuild.append(bytesToHexString(getDigest()));
             updateMdg(hash);
         }
 
@@ -71,5 +77,13 @@ public class HashingServlet extends HttpServlet {
         if (mdg.get() == null) {
             initialiseMessageDigest();
         }
+    }
+
+    private static String bytesToHexString(final byte[] bytes) {
+        final StringBuilder builder = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            builder.append(table[b >> 4 & 0x0f]).append(table[b & 0x0f]);
+        }
+        return builder.toString();
     }
 }

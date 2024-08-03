@@ -5,7 +5,8 @@ import io.gatling.core.structure.ScenarioBuilder
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.{HttpRequestBuilder, Http}
 
-import scala.concurrent.duration._;
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * @author Radim Vansa &ltrvansa@redhat.com&gt;
@@ -19,7 +20,7 @@ abstract class BaseSimulation extends Simulation {
   val pauseTime = Integer.getInteger("test.pauseTime", 4);
 
   def protocolConf() = {
-    http.baseURL("http://" + host + ":" + port + Activator.ROOT_PATH).doNotTrackHeader("1").shareConnections
+    http.baseUrl("http://" + host + ":" + port + Activator.ROOT_PATH).doNotTrackHeader("1").shareConnections
   }
 
   def pre(scenarioBuilder: ScenarioBuilder) = scenarioBuilder
@@ -27,7 +28,7 @@ abstract class BaseSimulation extends Simulation {
   def run(http: Http): HttpRequestBuilder;
 
   var name = getClass().getName();
-  name = name.substring(name.lastIndexOf('.') + 1).replaceAllLiterally("$", ".");
+  name = name.substring(name.lastIndexOf('.') + 1).replace("$", ".");
 //  setUp(pre(scenario(name).pause(pauseTime)).exec(run(http(name)))
   setUp(pre(scenario(name)).exec(run(http(name)))
     .inject(

@@ -16,87 +16,144 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- JBoss dependency versions -->
-
-        <version.wildfly.maven.plugin>1.0.2.Final</version.wildfly.maven.plugin>
-        <version.jboss.as.maven.plugin>7.7.Final</version.jboss.as.maven.plugin>
-
-        <version.jboss.spec.javaee.7.0>1.0.3.Final</version.jboss.spec.javaee.7.0>
+        <version.io.gatling>3.11.5</version.io.gatling>
+        <version.jakarta.ee>10.0.0</version.jakarta.ee>
+        <version.wildfly.maven.plugin>5.0.0.Final</version.wildfly.maven.plugin>
 
         <!-- other plug-in versions -->
-        <version.war.plugin>2.1.1</version.war.plugin>
+        <version.gatling-maven-plugin>4.9.6</version.gatling-maven-plugin>
+        <version.maven-ant-plugin>3.1.0</version.maven-ant-plugin>
+        <version.scala-maven-plugin>4.9.2</version.scala-maven-plugin>
+        <version.war.plugin>3.4.0</version.war.plugin>
 
-        <!-- maven-compiler-plugin -->
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <gatling.version>2.2.0</gatling.version>
-        <http-servlet.version>2.5</http-servlet.version>
-        <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
+        <!-- Compile with Java 17 -->
+        <maven.compiler.release>17</maven.compiler.release>
+
+        <!-- Test configurations -->
         <gatling.runMultipleSimulations>true</gatling.runMultipleSimulations>
+
+        <!-- Provisioning properties -->
+        <jboss.home>${project.build.directory}${file.separator}wildfly</jboss.home>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee-7.0</artifactId>
-                <version>${version.jboss.spec.javaee.7.0}</version>
-                <type>pom</type>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-bom</artifactId>
+                <version>${version.jakarta.ee}</version>
                 <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
         <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
-        </dependency>
-
-
-        <!-- Import the CDI API, we use provided scope as the API is included in WildFly -->
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Import the Common Annotations API (JSR-250), we use provided scope
-            as the API is included in WildFly -->
         <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.2_spec</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Import the JAX-RS API, we use provided scope as the API is included in WildFly -->
         <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>${http-servlet.version}</version>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.gatling.highcharts</groupId>
             <artifactId>gatling-charts-highcharts</artifactId>
-            <version>${gatling.version}</version>
+            <version>${version.io.gatling}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20151123</version>
+            <groupId>org.eclipse.parsson</groupId>
+            <artifactId>parsson</artifactId>
+            <version>1.1.6</version>
             <scope>test</scope>
         </dependency>
+        <!-- Currently Jakarta JSON Processing doesn't seem to work as it's not as forgiving, so we need to keep this
+             for now. -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${version.war.plugin}</version>
+                <configuration>
+                    <!-- Java EE doesn't require web.xml, Maven needs to catch up! -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven.plugin}</version>
+                <configuration>
+                    <jboss-home>${jboss.home}</jboss-home>
+                    <provisioning-dir>${jboss.home}</provisioning-dir>
+                    <feature-packs>
+                        <feature-pack>
+                            <groupId>org.wildfly</groupId>
+                            <artifactId>wildfly-ee-galleon-pack</artifactId>
+                        </feature-pack>
+                    </feature-packs>
+                    <channels>
+                        <channel>
+                            <manifest>
+                                <groupId>org.wildfly.channels</groupId>
+                                <artifactId>wildfly-ee</artifactId>
+                            </manifest>
+                        </channel>
+                    </channels>
+                    <layers>
+                        <layer>ee-core-profile-server</layer>
+                    </layers>
+                    <galleon-options>
+                        <jboss-fork-embedded>true</jboss-fork-embedded>
+                    </galleon-options>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>
@@ -123,14 +180,24 @@
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>${version.wildfly.maven.plugin}</version>
-                        <configuration>
-                            <hostname>${wildfly-hostname}</hostname>
-                            <port>${wildfly-port}</port>
-                            <username>${wildfly-username}</username>
-                            <password>${wildfly-password}</password>
-                        </configuration>
                         <executions>
+                            <!-- Provision a WildFly Server -->
+                            <execution>
+                                <id>provision</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>provision</goal>
+                                </goals>
+                            </execution>
+                            <!-- Start the WildFly server -->
+                            <execution>
+                                <id>start</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <!-- Deploy our test application -->
                             <execution>
                                 <id>deploy</id>
                                 <phase>pre-integration-test</phase>
@@ -138,63 +205,19 @@
                                     <goal>deploy</goal>
                                 </goals>
                             </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-
-        <profile>
-            <id>server_as7</id>
-            <activation>
-                <property>
-                    <name>!server</name>
-                </property>
-            </activation>
-            <build>
-                <finalName>${project.artifactId}</finalName>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jboss.as.plugins</groupId>
-                        <artifactId>jboss-as-maven-plugin</artifactId>
-                        <version>${version.jboss.as.maven.plugin}</version>
-                        <executions>
-                            <execution>
-                                <id>deploy</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>server-undeploy</id>
-            <activation>
-                <property>
-                    <name>!server</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>${version.wildfly.maven.plugin}</version>
-                        <configuration>
-                            <ignoreMissingDeployment>true</ignoreMissingDeployment>
-                        </configuration>
-                        <executions>
+                            <!-- After integration tests are done, undeploy the application and stop the server -->
                             <execution>
                                 <id>undeploy</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>undeploy</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>shutdown</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>shutdown</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -214,12 +237,24 @@
                     <plugin>
                         <groupId>net.alchim31.maven</groupId>
                         <artifactId>scala-maven-plugin</artifactId>
-                        <version>${scala-maven-plugin.version}</version>
+                        <version>${version.scala-maven-plugin}</version>
+                        <configuration>
+                            <addScalacArgs>-deprecation</addScalacArgs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>test-scala-compile</id>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                                <phase>test-compile</phase>
+                            </execution>
+                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>io.gatling</groupId>
                         <artifactId>gatling-maven-plugin</artifactId>
-                        <version>${gatling.version}</version>
+                        <version>${version.gatling-maven-plugin}</version>
                         <configuration>
                             <runMultipleSimulations>${gatling.runMultipleSimulations}</runMultipleSimulations>
                         </configuration>
@@ -227,7 +262,8 @@
                             <execution>
                                 <phase>integration-test</phase>
                                 <goals>
-                                    <goal>execute</goal>
+                                    <goal>test</goal>
+                                    <goal>verify</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -235,7 +271,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.8</version>
+                        <version>${version.maven-ant-plugin}</version>
                         <executions>
                             <execution>
                                 <id>clean-pld-results</id>
@@ -257,8 +293,9 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <java classname="org.jboss.perf.PrintStats" classpathref="maven.test.classpath">
-                                            <arg value="${project.build.directory}/gatling/results"/>
+                                        <java classname="org.jboss.perf.PrintStats" classpathref="maven.test.classpath" fork="yes">
+                                            <sysproperty key="java.security.manager" value="allow"/>
+                                            <arg value="${project.build.directory}/gatling/"/>
                                         </java>
                                     </target>
                                 </configuration>
@@ -269,17 +306,4 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${version.war.plugin}</version>
-                <configuration>
-                    <!-- Java EE doesn't require web.xml, Maven needs to catch up! -->
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
